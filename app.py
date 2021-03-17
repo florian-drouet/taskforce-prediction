@@ -18,6 +18,8 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash("dashboard_RH", external_stylesheets=external_stylesheets)
 
+server = app.server
+
 app.layout = html.Div(
     children=[
         html.H1(children='Global taskforce prediction with control parameters'),
