@@ -19,7 +19,7 @@ def get_data():
     df = pd.read_sql_query("""
     SELECT *
     FROM dataset;
-    """, con=pgsql_connection, parse_dates=['date_analysis'], index_col=['date_analysis'])
+    """, con=pgsql_connection, parse_dates=['date_analysis'], index_col=['date_analysis']).sort_index()
     
     variable_nurse = ['time_presence_nurse']
     variable_doctor = ['time_presence_doctor']
