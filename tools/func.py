@@ -3,10 +3,23 @@ import datetime
 import os
 import numpy as np
 import pickle
+import psycopg2
+
+def pgsql_connector():
+    DATABASE_URL = os.environ['DATABASE_URL']
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    print("### Connection to pgSQL successful ! ###")
+    return conn
 
 def get_data():
-    path = os.getcwd()
-    df = pd.read_csv(path+'/data/dataset.csv', parse_dates=['date'] ,index_col='date')
+    #Connect to pgSQL database
+    pgsql_connection = pgsql_connector()
+    
+    #Read data
+    df = pd.read_sql_query("""
+    SELECT *
+    FROM dataset;
+    """, con=pgsql_connection, parse_dates=['date_analysis'], index_col=['date_analysis'])
     
     variable_nurse = ['time_presence_nurse']
     variable_doctor = ['time_presence_doctor']
