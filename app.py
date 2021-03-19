@@ -10,7 +10,7 @@ from dash.dependencies import Input, Output
 from tools.func import update_data, get_data, machine_learning_parameters
 from tools.plot import plot_taskforce, plot_alert
 
-DEBUG=True
+DEBUG=False
 
 X, y = get_data(DEBUG)
 scaler, lin_reg = machine_learning_parameters()
