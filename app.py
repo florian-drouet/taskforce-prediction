@@ -10,7 +10,9 @@ from dash.dependencies import Input, Output
 from tools.func import update_data, get_data, machine_learning_parameters
 from tools.plot import plot_taskforce, plot_alert
 
-X, y = get_data()
+DEBUG=True
+
+X, y = get_data(DEBUG)
 scaler, lin_reg = machine_learning_parameters()
 
 #external_stylesheets = ['C:/Users/4170422/Documents/Etudes/Etudes_its_taskforce/stylesheet.css']
@@ -60,12 +62,12 @@ app.layout = html.Div(
                                                            ],
                                                            value='nurse',
                                                           ),
-                                             ]),  # Define the right elements
+                                             ], style={'display': 'block', 'vertical-align': 'center', 'margin-top': '1vw'}),  # Define the right elements
                            html.Div(className='nine columns',
                                     children=[
                                         dcc.Graph(id='its_graph'),
                                         dcc.Graph(id='alert_graph')
-                                    ])
+                                    ], style={'display': 'block', 'vertical-align': 'center'})
                           ])
     ])
 

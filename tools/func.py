@@ -5,15 +5,23 @@ import numpy as np
 import pickle
 import psycopg2
 
-def pgsql_connector():
-    DATABASE_URL = os.environ['DATABASE_URL']
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+def pgsql_connector(DEBUG):
+    if DEBUG:
+        host = "localhost"
+        port = 5432
+        dbname = "postgres"
+        user = "postgres"
+        password = '1ntothew1ld!'
+        conn = psycopg2.connect(f'postgresql://{user}:{password}@{host}:{port}/{dbname}')
+    else:
+        DATABASE_URL = os.environ['DATABASE_URL']
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     print("### Connection to pgSQL successful ! ###")
     return conn
 
-def get_data():
+def get_data(DEBUG):
     #Connect to pgSQL database
-    pgsql_connection = pgsql_connector()
+    pgsql_connection = pgsql_connector(DEBUG)
     
     #Read data
     df = pd.read_sql_query("""
