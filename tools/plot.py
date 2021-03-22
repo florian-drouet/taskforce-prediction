@@ -45,6 +45,7 @@ def plot_taskforce(y_true, y_future, population_type):
         yaxis=dict(
             showgrid=False, # Hide Gridlines
             showline=False, # Hide X-Axis
+            fixedrange = False
             #gridcolor='Black',
             #gridwidth=0.5
         ),
@@ -115,6 +116,7 @@ def plot_alert(alerts, y_future):
         yaxis=dict(
             showgrid=False, # Hide Gridlines
             showline=False, # Hide X-Axis
+            fixedrange = False  
         ),
     )
 
