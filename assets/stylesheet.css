@@ -1,65 +1,102 @@
-.app-header {
-  height: 110px;
-  line-height: 60px;
-  border-bottom: thin lightgrey solid;
-}
-
-.app-header .app-header--title {
-  font-family: "Open Sans";
-  font-size: 30px;
-  font-weight: bold;
-  padding-left: 5px;
-  color: rgb(50, 50, 50);
-}
-
-.app-header .app-header--subtitle {
-  font-family: "Open Sans";
-  font-size: 16px;
-  padding-left: 5px;
-  color: rgb(50, 50, 50);
-}
-
 /* For devices larger than 400px */
 @media (min-width: 400px) {
   .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    gap: 15px 15px;
+    grid-template-columns: 0.3fr 1.7fr;
+    grid-template-rows: 0.5fr 0.1fr 2.4fr 2.3fr;
+    gap: 0px 15px;
     grid-template-areas:
-      "controllers fig1 fig1 fig1 fig1"
-      "controllers fig1 fig1 fig1 fig1"
-      "controllers fig2 fig2 fig2 fig2"
-      "controllers fig2 fig2 fig2 fig2";
-    }
+      "header header"
+      ". ."
+      "controllers fig1"
+      "controllers fig2";
+  }
+
+  .header { 
+    grid-area: header; 
+    height: 110px;
+    line-height: 60px;
+    border-bottom: thin lightgrey solid;
+  }
+
+  .header .header--title {
+    font-family: "Open Sans";
+    font-size: 30px;
+    font-weight: bold;
+    padding-left: 5px;
+    color: rgb(50, 50, 50);
+  }
+  
+  .header .header--subtitle {
+    font-family: "Open Sans";
+    font-size: 16px;
+    padding-left: 5px;
+    color: rgb(50, 50, 50);
+  }
+
+  .controllers { 
+    font-family: "Open Sans";
+    grid-area: controllers;
+    font-size: 18px;
+    padding-left: 5px; }
+  
+  .fig1 { 
+    grid-area: fig1; 
+    margin-top: 5px; }
+
+  .fig2 { 
+    grid-area: fig2; }
 }
+
 
 /* For devices larger than 500px */
 @media (min-width: 500px) {
   .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    gap: 15px 15px;
+    grid-template-columns: 0.3fr 1.7fr;
+    grid-template-rows: 0.5fr 0.1fr 2.4fr 2.3fr;
+    gap: 0px 15px;
     grid-template-areas:
-      "controllers fig1 fig1 fig1 fig1 fig1"
-      "controllers fig1 fig1 fig1 fig1 fig1"
-      "controllers fig2 fig2 fig2 fig2 fig2"
-      "controllers fig2 fig2 fig2 fig2 fig2";
-    }
-}
+      "header header"
+      ". ."
+      "controllers fig1"
+      "controllers fig2";
+  }
 
-.controllers {
-  font-family: "Open Sans";
-  grid-area: controllers;
-  font-size: 18px;
-  padding-left: 5px;
-}
+  .header { 
+    grid-area: header; 
+    height: 110px;
+    line-height: 60px;
+    border-bottom: thin lightgrey solid;}
 
-.fig1 { 
-  grid-area: fig1; 
-  margin-top: 5px;}
-.fig2 { grid-area: fig2; }
+  .header .header--title {
+    font-family: "Open Sans";
+    font-size: 30px;
+    font-weight: bold;
+    padding-left: 5px;
+    color: rgb(50, 50, 50);
+  }
+  
+  .header .header--subtitle {
+    font-family: "Open Sans";
+    font-size: 16px;
+    padding-left: 5px;
+    color: rgb(50, 50, 50);
+  }
+
+  .controllers { 
+    font-family: "Open Sans";
+    grid-area: controllers;
+    font-size: 18px;
+    padding-left: 5px; }
+  
+  .fig1 { 
+    grid-area: fig1; 
+    margin-top: 5px; }
+
+  .fig2 { 
+    grid-area: fig2; }
+}
 
 input[type="number"],
 select {
@@ -82,4 +119,4 @@ select {
     margin-bottom: 1.33em;
     margin-left: 0;
     margin-right: 0;
-  }
+}

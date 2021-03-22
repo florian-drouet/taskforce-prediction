@@ -16,20 +16,17 @@ DEBUG=True
 X, y = get_data(DEBUG)
 scaler, lin_reg = machine_learning_parameters()
 
-app = dash.Dash("dashboard_RH")
+app = dash.Dash("dashboard_RH", meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}])
 
 server = app.server
 
 app.layout = html.Div(children=[
-        html.Div(
-            className="app-header",
-            children=[
-                html.Div('Global taskforce prediction with control parameters', className="app-header--title"), 
-                html.Div('Made with \u2764\ufe0f with Dash.', className="app-header--subtitle")
-            ]),
-        
         html.Div(className='grid-container',
             children=[
+                html.Div(className="header",
+                         children=[
+                             html.Div('Global taskforce prediction with control parameters', className="header--title"),
+                             html.Div('Made with \u2764\ufe0f with Dash.', className="header--subtitle")]),
                 html.Div(className="controllers",
                          children=[
                             html.Label("Projection parameter"),
