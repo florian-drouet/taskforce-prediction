@@ -3,6 +3,7 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
+import os
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -10,66 +11,62 @@ from dash.dependencies import Input, Output
 from tools.func import update_data, get_data, machine_learning_parameters
 from tools.plot import plot_taskforce, plot_alert
 
-DEBUG=False
+DEBUG=True
 
 X, y = get_data(DEBUG)
 scaler, lin_reg = machine_learning_parameters()
 
-#external_stylesheets = ['C:/Users/4170422/Documents/Etudes/Etudes_its_taskforce/stylesheet.css']
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
-app = dash.Dash("dashboard_RH", external_stylesheets=external_stylesheets)
+app = dash.Dash("dashboard_RH")
 
 server = app.server
 
-app.layout = html.Div(
-    children=[
-        html.H1(children='Global taskforce prediction with control parameters'),
-
-        html.Div(children='''
-            Made with \u2764\ufe0f with Dash.
-        '''),
+app.layout = html.Div(children=[
+        html.Div(
+            className="app-header",
+            children=[
+                html.Div('Global taskforce prediction with control parameters', className="app-header--title"), 
+                html.Div('Made with \u2764\ufe0f with Dash.', className="app-header--subtitle")
+            ]),
         
-        html.Div(className='row',  # Define the row element
-                 children=[html.Div(className='three columns', # define the left elements
-                                    children=[html.H4("Projection parameter"),
-                                              dcc.Input(id='projection_parameter',
-                                                        type='number',
-                                                        value=1.01,
-                                                        step=0.001,
-                                                       ),
-                                              html.H4("Number of days"),
-                                              dcc.Input(id='number_of_days_projections',
-                                                        type='number',
-                                                        value=60,
-                                                        min=1,
-                                                        step=1,
-                                                       ),
-                                              html.H4("Type of projection"),
-                                              dcc.Dropdown(id='projection_mode',
-                                                           options=[
-                                                               {'label': 'Linear', 'value': 'linear'},
-                                                               {'label': 'Quadratic', 'value': 'quadratic'},
-                                                               {'label': 'Exponential', 'value': 'exponential'}
-                                                           ],
-                                                           value='quadratic',
-                                                          ),
-                                               html.H4("Type of population"),
-                                               dcc.Dropdown(id='population_type',
-                                                           options=[
-                                                               {'label': 'ITS', 'value': 'nurse'},
-                                                               {'label': 'Doctors', 'value': 'doctor'}
-                                                           ],
-                                                           value='nurse',
-                                                          ),
-                                             ], style={'display': 'block', 'vertical-align': 'center', 'margin-top': '1vw'}),  # Define the right elements
-                           html.Div(className='nine columns',
-                                    children=[
-                                        dcc.Graph(id='its_graph'),
-                                        dcc.Graph(id='alert_graph')
-                                    ], style={'display': 'block', 'vertical-align': 'center'})
-                          ])
-    ])
+        html.Div(className='grid-container',
+            children=[
+                html.Div(className="controllers",
+                         children=[
+                            html.Label("Projection parameter"),
+                            dcc.Input(id='projection_parameter',
+                                    type='number',
+                                    value=1.01,
+                                    step=0.001,
+                                    ),
+                            html.Label("Number of days"),
+                            dcc.Input(id='number_of_days_projections',
+                                    type='number',
+                                    value=60,
+                                    min=1,
+                                    step=1,
+                                    ),
+                            html.Label("Type of projection"),
+                            dcc.Dropdown(id='projection_mode',
+                                        options=[
+                                            {'label': 'Linear', 'value': 'linear'},
+                                            {'label': 'Quadratic', 'value': 'quadratic'},
+                                            {'label': 'Exponential', 'value': 'exponential'}
+                                        ],
+                                        value='quadratic',
+                                        ),
+                            html.Label("Type of population"),
+                            dcc.Dropdown(id='population_type',
+                                        options=[
+                                            {'label': 'ITS', 'value': 'nurse'},
+                                            {'label': 'Doctors', 'value': 'doctor'}
+                                        ],
+                                        value='nurse',
+                                        ),
+                            ]),
+                html.Div(className='fig1', children=[dcc.Graph(id='its_graph')]),
+                html.Div(className='fig2', children=[dcc.Graph(id='alert_graph')])
+                    ])
+        ])
 
 @app.callback(Output('its_graph', 'figure'),
               Output('alert_graph', 'figure'),
