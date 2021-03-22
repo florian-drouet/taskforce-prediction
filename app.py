@@ -3,6 +3,7 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
+import sys
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -10,7 +11,10 @@ from dash.dependencies import Input, Output
 from tools.func import update_data, get_data, machine_learning_parameters
 from tools.plot import plot_taskforce, plot_alert
 
-DEBUG=True
+if sys.argv[1]=='DEBUG':
+    DEBUG=True
+else:
+    DEBUG=False
 
 X, y = get_data(DEBUG)
 scaler, lin_reg = machine_learning_parameters()
