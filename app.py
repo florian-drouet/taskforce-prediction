@@ -29,7 +29,8 @@ app.layout = html.Div(children=[
                         html.Div(className="header",
                                 children=[
                                     html.Div('Global taskforce prediction with control parameters', className="header--title"),
-                                    html.Div('Made with \u2764\ufe0f with Dash.', className="header--subtitle")]),
+                                    html.Div('Made with \u2764\ufe0f with Dash.', className="header--subtitle"),
+                                    html.Img(src='/assets/logo_covidom.png', className='img')]),
                         html.Div(className="controllers",
                                 children=[
                                     html.Label("Projection parameter"),
