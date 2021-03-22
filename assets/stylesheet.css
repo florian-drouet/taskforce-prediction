@@ -23,7 +23,7 @@
 @media (min-width: 400px) {
   .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr;
     gap: 15px 15px;
     grid-template-areas:
@@ -38,14 +38,14 @@
 @media (min-width: 500px) {
   .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr;
     gap: 15px 15px;
     grid-template-areas:
-      "controllers fig1 fig1 fig1 fig1 fig1 fig1"
-      "controllers fig1 fig1 fig1 fig1 fig1 fig1"
-      "controllers fig2 fig2 fig2 fig2 fig2 fig2"
-      "controllers fig2 fig2 fig2 fig2 fig2 fig2";
+      "controllers fig1 fig1 fig1 fig1 fig1"
+      "controllers fig1 fig1 fig1 fig1 fig1"
+      "controllers fig2 fig2 fig2 fig2 fig2"
+      "controllers fig2 fig2 fig2 fig2 fig2";
     }
 }
 
