@@ -1,4 +1,3 @@
-#test
 # -*- coding: utf-8 -*-
 
 # Run this app with `python app.py` and
