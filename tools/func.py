@@ -11,7 +11,7 @@ def pgsql_connector(DEBUG):
         port = 5432
         dbname = "postgres"
         user = "postgres"
-        password = '1ntothew1ld!'
+        password = os.environ['PASSWORD_LOCAL_PG']
         conn = psycopg2.connect(f'postgresql://{user}:{password}@{host}:{port}/{dbname}')
     else:
         DATABASE_URL = os.environ['DATABASE_URL']
@@ -84,8 +84,8 @@ def update_data(X, y, model, preprocessing, projection_mode, projection_paramete
     projection.number_of_non_treated_red_alerts=0.
     projection.number_of_non_treated_orange_alerts=0.
 
-    data_red = [X.tail(1)["number_of_red_alerts"][0]]
-    data_orange = [X.tail(1)["number_of_orange_alerts"][0]]
+    data_red = [round(X.tail(7)["number_of_red_alerts"].mean())]
+    data_orange = [round(X.tail(7)["number_of_orange_alerts"].mean())]
 
     projection.number_of_red_alerts, projection.number_of_orange_alerts = get_alert_forecasting(projection_mode, projection_parameter, data_red, data_orange, number_of_days_projections)
 
