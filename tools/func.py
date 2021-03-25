@@ -74,7 +74,6 @@ def get_alert_forecasting(projection_mode, projection_parameter, data_red, data_
 
 def update_data(X, y, model, preprocessing, projection_mode, projection_parameter, number_of_days_projections):
 
-    yesterday = datetime.date.today() - datetime.timedelta(days=1)
     non_dummy_columns = ['number_of_red_alerts', 'number_of_non_treated_red_alerts', 'number_of_orange_alerts', 'number_of_non_treated_orange_alerts']
     dummy_columns = ['weekdays']
     
@@ -101,6 +100,6 @@ def update_data(X, y, model, preprocessing, projection_mode, projection_paramete
     
     y_true = y.append(pd.Series([future[0]], index=[X.tail(1).index[0]]))
     y_future = pd.Series(data=future, index=pd.date_range(start=X.tail(1).index[0] + datetime.timedelta(days=0), end=X.tail(1).index[0] + datetime.timedelta(days=number_of_days_projections)))
-    alerts = pd.concat([X, projection.loc[projection.index>datetime.datetime.combine(yesterday, datetime.datetime.min.time())]], axis=0)
+    alerts = pd.concat([X, projection.loc[projection.index>X.tail(1).index[0]]], axis=0)
     
     return y_true, y_future, alerts
