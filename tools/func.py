@@ -1,7 +1,6 @@
 import pandas as pd
 import datetime
 import os
-import numpy as np
 import pickle
 import psycopg2
 
