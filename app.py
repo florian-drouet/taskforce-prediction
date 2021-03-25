@@ -33,11 +33,19 @@ app.layout = html.Div(children=[
                                     html.Img(src='/assets/logo_covidom.png', className='img')]),
                         html.Div(className="controllers",
                                 children=[
-                                    html.Label("Projection parameter"),
-                                    dcc.Input(id='projection_parameter',
+                                    html.Label("Arithmetic parameter"),
+                                    dcc.Input(id='arithmetic_parameter',
+                                            type='number',
+                                            value=20,
+                                            step=1,
+                                            disabled=True,
+                                            ),
+                                    html.Label("Geometric parameter"),
+                                    dcc.Input(id='geometric_parameter',
                                             type='number',
                                             value=1.01,
                                             step=0.001,
+                                            disabled=False,
                                             ),
                                     html.Label("Number of days"),
                                     dcc.Input(id='number_of_days_projections',
@@ -49,11 +57,11 @@ app.layout = html.Div(children=[
                                     html.Label("Type of projection"),
                                     dcc.Dropdown(id='projection_mode',
                                                 options=[
-                                                    {'label': 'Linear', 'value': 'linear'},
-                                                    {'label': 'Quadratic', 'value': 'quadratic'},
-                                                    {'label': 'Exponential', 'value': 'exponential'}
+                                                    {'label': 'Linear', 'value': 'arithmetic'},
+                                                    {'label': 'Quadratic', 'value': 'geometric'},
+                                                    {'label': 'Mix', 'value': 'arithmetic_geometric'}
                                                 ],
-                                                value='quadratic',
+                                                value='geometric',
                                                 ),
                                     html.Label("Type of population"),
                                     dcc.Dropdown(id='population_type',
@@ -71,15 +79,27 @@ app.layout = html.Div(children=[
 
 @app.callback(Output('its_graph', 'figure'),
               Output('alert_graph', 'figure'),
-              Input('projection_parameter', 'value'),
+              Input('arithmetic_parameter', 'value'),
+              Input('geometric_parameter', 'value'),
               Input('number_of_days_projections', 'value'),
               Input('projection_mode', 'value'),
               Input('population_type', 'value'))
-def update_alert_graph(projection_parameter, number_of_days_projections, projection_mode, population_type):
-    y_true, y_future, alerts = update_data(X=X, y=y[population_type], model=lin_reg[population_type], preprocessing=scaler, projection_mode=projection_mode, projection_parameter=projection_parameter, number_of_days_projections=number_of_days_projections)
+def update_alert_graph(arithmetic_parameter, geometric_parameter, number_of_days_projections, projection_mode, population_type):
+    y_true, y_future, alerts = update_data(X=X, y=y[population_type], model=lin_reg[population_type], preprocessing=scaler, projection_mode=projection_mode, arithmetic_parameter=arithmetic_parameter, geometric_parameter = geometric_parameter, number_of_days_projections=number_of_days_projections)
     fig1 = plot_taskforce(y_true, y_future, population_type)
     fig2 = plot_alert(alerts, y_future)
     return fig1, fig2
+
+@app.callback(Output('arithmetic_parameter', 'disabled'),
+              Output('geometric_parameter', 'disabled'),
+              Input('projection_mode', 'value'))
+def enable_inputs(value):
+    if value == 'arithmetic':
+        return False,  True
+    elif value == 'geometric':
+        return True, False
+    elif value == 'arithmetic_geometric':
+        return False, False
 
 if __name__ == '__main__':
     app.run_server(debug=True, use_reloader=False)
