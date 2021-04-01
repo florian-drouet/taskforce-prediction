@@ -56,7 +56,7 @@ def machine_learning_parameters():
     
     return scaler, model_dict
 
-def get_alert_forecasting(projection_mode, arithmetic_parameter, geometric_parameter, data_red, data_orange, number_of_days_projections):
+def get_alert_forecasting(projection_mode, arithmetic_parameter, geometric_parameter, data_red, data_orange, number_of_days_projections, alerts_peak, coef_bell1, coef_bell2):
     if projection_mode == 'arithmetic':
         geometric_parameter=1
         for i in range(1, number_of_days_projections+1):
@@ -71,9 +71,17 @@ def get_alert_forecasting(projection_mode, arithmetic_parameter, geometric_param
         for i in range(1, number_of_days_projections+1):
             data_red.append(geometric_parameter*data_red[i-1]+arithmetic_parameter)
             data_orange.append(geometric_parameter*data_orange[i-1]+arithmetic_parameter)
+    elif projection_mode == 'bell_curve':
+        arithmetic_parameter=0
+        for i in range(1,alerts_peak+1):
+            data_red.append(coef_bell1*data_red[i-1]+arithmetic_parameter)
+            data_orange.append(coef_bell1*data_orange[i-1]+arithmetic_parameter)
+        for i in range(alerts_peak+1,number_of_days_projections+1):
+            data_red.append(coef_bell2*data_red[i-1]+arithmetic_parameter)
+            data_orange.append(coef_bell2*data_orange[i-1]+arithmetic_parameter)
     return data_red, data_orange
 
-def update_data(X, y, model, preprocessing, projection_mode, arithmetic_parameter, geometric_parameter, number_of_days_projections):
+def update_data(X, y, model, preprocessing, projection_mode, arithmetic_parameter, geometric_parameter, number_of_days_projections, alerts_peak, coef_bell1, coef_bell2):
 
     non_dummy_columns = ['number_of_red_alerts', 'number_of_non_treated_red_alerts', 'number_of_orange_alerts', 'number_of_non_treated_orange_alerts']
     dummy_columns = ['weekdays']
@@ -87,7 +95,7 @@ def update_data(X, y, model, preprocessing, projection_mode, arithmetic_paramete
     data_red = [round(X.tail(7)["number_of_red_alerts"].mean())]
     data_orange = [round(X.tail(7)["number_of_orange_alerts"].mean())]
 
-    projection.number_of_red_alerts, projection.number_of_orange_alerts = get_alert_forecasting(projection_mode, arithmetic_parameter, geometric_parameter, data_red, data_orange, number_of_days_projections)
+    projection.number_of_red_alerts, projection.number_of_orange_alerts = get_alert_forecasting(projection_mode, arithmetic_parameter, geometric_parameter, data_red, data_orange, number_of_days_projections, alerts_peak, coef_bell1, coef_bell2)
 
     temp = projection.reset_index()
     temp.weekdays = (temp.date.dt.weekday<=4).map({True:1,False:0})

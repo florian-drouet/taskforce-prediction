@@ -59,7 +59,8 @@ app.layout = html.Div(children=[
                                                 options=[
                                                     {'label': 'Linear', 'value': 'arithmetic'},
                                                     {'label': 'Quadratic', 'value': 'geometric'},
-                                                    {'label': 'Mix', 'value': 'arithmetic_geometric'}
+                                                    {'label': 'Mix', 'value': 'arithmetic_geometric'},
+                                                    {'label': 'Bell curve', 'value': 'bell_curve'}
                                                 ],
                                                 value='geometric',
                                                 ),
@@ -71,6 +72,28 @@ app.layout = html.Div(children=[
                                                 ],
                                                 value='nurse',
                                                 ),
+                                    html.Label("Alert's peak"),
+                                    dcc.Input(id='alerts_peak',
+                                            type='number',
+                                            value=30,
+                                            min=1,
+                                            step=1,
+                                            disabled=True
+                                            ),
+                                    html.Label("Upstream slope"),
+                                    dcc.Input(id='coef_bell1',
+                                            type='number',
+                                            value=1.05,
+                                            step=0.001,
+                                            disabled=True
+                                            ),
+                                    html.Label("Downstream slope"),
+                                    dcc.Input(id='coef_bell2',
+                                            type='number',
+                                            value=0.95,
+                                            step=0.001,
+                                            disabled=True
+                                            ),
                                     ]),
                         html.Div(className='fig1', children=[dcc.Graph(id='its_graph')]),
                         html.Div(className='fig2', children=[dcc.Graph(id='alert_graph')])
@@ -83,23 +106,31 @@ app.layout = html.Div(children=[
               Input('geometric_parameter', 'value'),
               Input('number_of_days_projections', 'value'),
               Input('projection_mode', 'value'),
-              Input('population_type', 'value'))
-def update_alert_graph(arithmetic_parameter, geometric_parameter, number_of_days_projections, projection_mode, population_type):
-    y_true, y_future, alerts = update_data(X=X, y=y[population_type], model=lin_reg[population_type], preprocessing=scaler, projection_mode=projection_mode, arithmetic_parameter=arithmetic_parameter, geometric_parameter = geometric_parameter, number_of_days_projections=number_of_days_projections)
+              Input('population_type', 'value'),
+              Input('alerts_peak', 'value'),
+              Input('coef_bell1', 'value'),
+              Input('coef_bell2', 'value'))
+def update_alert_graph(arithmetic_parameter, geometric_parameter, number_of_days_projections, projection_mode, population_type,  alerts_peak, coef_bell1, coef_bell2):
+    y_true, y_future, alerts = update_data(X=X, y=y[population_type], model=lin_reg[population_type], preprocessing=scaler, projection_mode=projection_mode, arithmetic_parameter=arithmetic_parameter, geometric_parameter = geometric_parameter, number_of_days_projections=number_of_days_projections,  alerts_peak=alerts_peak, coef_bell1=coef_bell1, coef_bell2=coef_bell2)
     fig1 = plot_taskforce(y_true, y_future, population_type)
     fig2 = plot_alert(alerts, y_future)
     return fig1, fig2
 
 @app.callback(Output('arithmetic_parameter', 'disabled'),
               Output('geometric_parameter', 'disabled'),
+              Output('alerts_peak', 'disabled'),
+              Output('coef_bell1', 'disabled'),
+              Output('coef_bell2', 'disabled'),
               Input('projection_mode', 'value'))
 def enable_inputs(value):
     if value == 'arithmetic':
-        return False,  True
+        return False,  True, True, True, True
     elif value == 'geometric':
-        return True, False
+        return True, False, True, True, True
     elif value == 'arithmetic_geometric':
-        return False, False
+        return False, False, True, True, True
+    elif value == 'bell_curve':
+        return True, True, False, False, False
 
 if __name__ == '__main__':
     app.run_server(debug=True, use_reloader=False)
