@@ -111,6 +111,8 @@ app.layout = html.Div(children=[
               Input('coef_bell1', 'value'),
               Input('coef_bell2', 'value'))
 def update_alert_graph(arithmetic_parameter, geometric_parameter, number_of_days_projections, projection_mode, population_type,  alerts_peak, coef_bell1, coef_bell2):
+    if alerts_peak>=number_of_days_projections:
+        raise Exception('WARNING : The peak of alerts cannot be greather than (or equal) to the number of projection days ! Please enter anothe value.')
     y_true, y_future, alerts = update_data(X=X, y=y[population_type], model=lin_reg[population_type], preprocessing=scaler, projection_mode=projection_mode, arithmetic_parameter=arithmetic_parameter, geometric_parameter = geometric_parameter, number_of_days_projections=number_of_days_projections,  alerts_peak=alerts_peak, coef_bell1=coef_bell1, coef_bell2=coef_bell2)
     fig1 = plot_taskforce(y_true, y_future, population_type)
     fig2 = plot_alert(alerts, y_future)
