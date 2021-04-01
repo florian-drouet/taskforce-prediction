@@ -46,10 +46,9 @@ app.layout = html.Div(children=[
                                                 options=[
                                                     {'label': 'Linear', 'value': 'arithmetic'},
                                                     {'label': 'Quadratic', 'value': 'geometric'},
-                                                    {'label': 'Mix', 'value': 'arithmetic_geometric'},
                                                     {'label': 'Bell curve', 'value': 'bell_curve'}
                                                 ],
-                                                value='geometric',
+                                                value='bell_curve',
                                                 ),
                                     html.Label("Number of days"),
                                     dcc.Input(id='number_of_days_projections',
@@ -135,8 +134,6 @@ def enable_inputs(value):
         return False,  True, True, True, True
     elif value == 'geometric':
         return True, False, True, True, True
-    elif value == 'arithmetic_geometric':
-        return False, False, True, True, True
     elif value == 'bell_curve':
         return True, True, False, False, False
 

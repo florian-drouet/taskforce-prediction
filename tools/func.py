@@ -67,10 +67,6 @@ def get_alert_forecasting(projection_mode, arithmetic_parameter, geometric_param
         for i in range(1, number_of_days_projections+1):
             data_red.append(geometric_parameter*data_red[i-1]+arithmetic_parameter)
             data_orange.append(geometric_parameter*data_orange[i-1]+arithmetic_parameter)
-    elif projection_mode == 'arithmetic_geometric':
-        for i in range(1, number_of_days_projections+1):
-            data_red.append(geometric_parameter*data_red[i-1]+arithmetic_parameter)
-            data_orange.append(geometric_parameter*data_orange[i-1]+arithmetic_parameter)
     elif projection_mode == 'bell_curve':
         arithmetic_parameter=0
         for i in range(1,alerts_peak+1):
