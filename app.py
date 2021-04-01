@@ -4,6 +4,7 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 import sys
+import datetime
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -33,6 +34,12 @@ app.layout = html.Div(children=[
                                     html.Img(src='/assets/logo_covidom.png', className='img')]),
                         html.Div(className="controllers",
                                 children=[
+                                    dcc.DatePickerSingle(id='start_date',
+                                                        date=datetime.date(2020,3,10),
+                                                        display_format='DD/MM/YYYY',
+                                                        min_date_allowed=datetime.date(2020, 3, 10),
+                                                        placeholder='START DATE',
+                                                        ),
                                     html.Label("Type of population"),
                                     dcc.Dropdown(id='population_type',
                                                 options=[
@@ -107,6 +114,7 @@ app.layout = html.Div(children=[
 
 @app.callback(Output('its_graph', 'figure'),
               Output('alert_graph', 'figure'),
+              Input('start_date', 'date'),
               Input('arithmetic_parameter', 'value'),
               Input('geometric_parameter', 'value'),
               Input('number_of_days_projections', 'value'),
@@ -115,10 +123,18 @@ app.layout = html.Div(children=[
               Input('alerts_peak', 'value'),
               Input('coef_bell1', 'value'),
               Input('coef_bell2', 'value'))
-def update_alert_graph(arithmetic_parameter, geometric_parameter, number_of_days_projections, projection_mode, population_type,  alerts_peak, coef_bell1, coef_bell2):
+def update_graphs(start_date, arithmetic_parameter, geometric_parameter, number_of_days_projections, projection_mode, population_type,  alerts_peak, coef_bell1, coef_bell2):
+    '''
+    This function updates the two graphs with the parameters from the controller's section.
+    '''
+    # converts start date input into datetime
+    start = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+    y_plot = y[population_type]
+    
     if alerts_peak>=number_of_days_projections:
         raise Exception('WARNING : The peak of alerts cannot be greather than (or equal) to the number of projection days ! Please enter anothe value.')
-    y_true, y_future, alerts = update_data(X=X, y=y[population_type], model=lin_reg[population_type], preprocessing=scaler, projection_mode=projection_mode, arithmetic_parameter=arithmetic_parameter, geometric_parameter = geometric_parameter, number_of_days_projections=number_of_days_projections,  alerts_peak=alerts_peak, coef_bell1=coef_bell1, coef_bell2=coef_bell2)
+    
+    y_true, y_future, alerts = update_data(X=X.loc[X.index>=start], y=y_plot.loc[y_plot.index>=start], model=lin_reg[population_type], preprocessing=scaler, projection_mode=projection_mode, arithmetic_parameter=arithmetic_parameter, geometric_parameter = geometric_parameter, number_of_days_projections=number_of_days_projections,  alerts_peak=alerts_peak, coef_bell1=coef_bell1, coef_bell2=coef_bell2)
     fig1 = plot_taskforce(y_true, y_future, population_type)
     fig2 = plot_alert(alerts, y_future)
     return fig1, fig2
