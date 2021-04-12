@@ -173,7 +173,7 @@ def update_graphs(
 
     if alerts_peak >= number_of_days_projections:
         raise Exception(
-            "WARNING : The peak of alerts cannot be greather than (or equal) to the number of projection days ! Please enter anothe value."
+            "WARNING : The peak of alerts cannot be greather than (or equal) to the number of projection days ! Please enter another value."
         )
 
     y_true, y_future, alerts = update_data(
