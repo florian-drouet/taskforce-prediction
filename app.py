@@ -176,7 +176,7 @@ def update_graphs(
             "WARNING : The peak of alerts cannot be greather than (or equal) to the number of projection days ! Please enter another value."
         )
 
-    y_true, y_future, alerts = update_data(
+    y_true, y_future, y_future_sla, alerts = update_data(
         X=X.loc[X.index >= start],
         y=y_plot.loc[y_plot.index >= start],
         model=lin_reg[population_type],
@@ -188,9 +188,9 @@ def update_graphs(
         alerts_peak=alerts_peak,
         coef_bell1=coef_bell1,
         coef_bell2=coef_bell2,
-        sla_level=0.95
+        sla_level=0.7
     )
-    fig1 = plot_taskforce(y_true, y_future, population_type)
+    fig1 = plot_taskforce(y_true, y_future, y_future_sla, population_type)
     fig2 = plot_alert(alerts, y_future)
     return fig1, fig2
 

@@ -1,12 +1,13 @@
 import plotly.graph_objects as go
 
 
-def plot_taskforce(y_true, y_future, population_type):
+def plot_taskforce(y_true, y_future, y_future_sla, population_type):
 
     pop_translate = {"nurse": "ITS", "doctor": "Doctor"}
 
     trace_1 = go.Scatter(x=y_true.index, y=y_true.values, name="training")
     trace_2 = go.Scatter(x=y_future.index, y=y_future.values, name="predictions")
+    trace_3 = go.Scatter(x=y_future_sla.index, y=y_future_sla.values, name="confidence")
 
     # Create fig and add layout
     layout = go.Layout(
@@ -41,6 +42,7 @@ def plot_taskforce(y_true, y_future, population_type):
     # Add traces
     fig1.add_trace(trace_1)
     fig1.add_trace(trace_2)
+    fig1.add_trace(trace_3)
 
     # Add shape regions
     fig1.add_vrect(

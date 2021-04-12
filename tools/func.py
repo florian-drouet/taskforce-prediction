@@ -118,8 +118,8 @@ def add_sla(dataframe: pd.DataFrame, sla_level: float):
     Add a service level agreement (SLA) for the number of non treated red and orange alerts.
     In other words, SLA level set to 0.95 means that we 'accept' 5 non treated red alerts for a total of 100 red alerts.
     """
-    dataframe["number_of_non_treated_red_alerts"] = dataframe.number_of_red_alerts.multiply(1-sla_level)
-    dataframe["number_of_non_treated_orange_alerts"] = dataframe.number_of_orange_alerts.multiply(1-sla_level)
+    dataframe["number_of_non_treated_red_alerts_sla"] = dataframe.number_of_red_alerts.multiply(1-sla_level)
+    dataframe["number_of_non_treated_orange_alerts_sla"] = dataframe.number_of_orange_alerts.multiply(1-sla_level)
     return dataframe
 
 def update_data(
@@ -142,6 +142,12 @@ def update_data(
         "number_of_non_treated_red_alerts",
         "number_of_orange_alerts",
         "number_of_non_treated_orange_alerts",
+    ]
+    non_dummy_columns_sla = [
+        "number_of_red_alerts",
+        "number_of_non_treated_red_alerts_sla",
+        "number_of_orange_alerts",
+        "number_of_non_treated_orange_alerts_sla",
     ]
     dummy_columns = ["weekdays"]
 
@@ -185,16 +191,30 @@ def update_data(
     projection_reset = projection.reset_index(drop=True)
     concat_projection = pd.DataFrame(
         data=preprocessing.transform(
-            projection_reset.loc[:, projection_reset.columns.isin(non_dummy_columns)]
+            projection_reset[['number_of_red_alerts', 'number_of_non_treated_red_alerts', 'number_of_orange_alerts', 'number_of_non_treated_orange_alerts']]
         ),
         columns=non_dummy_columns,
+    )
+
+    concat_projection_sla = pd.DataFrame(
+        data=preprocessing.transform(
+            projection_reset[['number_of_red_alerts', 'number_of_non_treated_red_alerts_sla', 'number_of_orange_alerts', 'number_of_non_treated_orange_alerts_sla']]
+        ),
+        columns=non_dummy_columns_sla,
     )
 
     projection_scaled = pd.concat(
         (concat_projection, projection_reset[dummy_columns]), axis=1
     )
+    projection_scaled_sla = pd.concat(
+        (concat_projection_sla, projection_reset[dummy_columns]), axis=1
+    )
 
-    future = model.predict(projection_scaled)
+    print(projection_scaled)
+    print(projection_scaled_sla)
+
+    future = model.predict(projection_scaled[['number_of_red_alerts', 'number_of_non_treated_red_alerts', 'number_of_orange_alerts', 'number_of_non_treated_orange_alerts', 'weekdays']])
+    future_sla = model.predict(projection_scaled_sla[['number_of_red_alerts', 'number_of_non_treated_red_alerts_sla', 'number_of_orange_alerts', 'number_of_non_treated_orange_alerts_sla', 'weekdays']])
 
     y_true = y.append(pd.Series([future[0]], index=[X.tail(1).index[0]]))
     y_future = pd.Series(
@@ -205,11 +225,20 @@ def update_data(
             + datetime.timedelta(days=number_of_days_projections),
         ),
     )
+
+    y_future_sla = pd.Series(
+        data=future_sla,
+        index=pd.date_range(
+            start=X.tail(1).index[0] + datetime.timedelta(days=0),
+            end=X.tail(1).index[0]
+            + datetime.timedelta(days=number_of_days_projections),
+        ),
+    )
     alerts = pd.concat(
         [X, projection.loc[projection.index > X.tail(1).index[0]]], axis=0
     )
 
-    return y_true, y_future, alerts
+    return y_true, y_future, y_future_sla, alerts
 
 if __name__ == "__main__":
     # For testing purposes
