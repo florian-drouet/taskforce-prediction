@@ -113,6 +113,15 @@ def get_alert_forecasting(
     return data_red, data_orange
 
 
+def add_sla(dataframe: pd.DataFrame, sla_level: float):
+    """
+    Add a service level agreement (SLA) for the number of non treated red and orange alerts.
+    In other words, SLA level set to 0.95 means that we 'accept' 5 non treated red alerts for a total of 100 red alerts.
+    """
+    dataframe["number_of_non_treated_red_alerts"] = dataframe.number_of_red_alerts.multiply(1-sla_level)
+    dataframe["number_of_non_treated_orange_alerts"] = dataframe.number_of_orange_alerts.multiply(1-sla_level)
+    return dataframe
+
 def update_data(
     X,
     y,
@@ -125,6 +134,7 @@ def update_data(
     alerts_peak,
     coef_bell1,
     coef_bell2,
+    sla_level,
 ):
 
     non_dummy_columns = [
@@ -170,6 +180,8 @@ def update_data(
     temp.weekdays = (temp.date.dt.weekday <= 4).map({True: 1, False: 0})
     projection = temp.set_index("date")
 
+    projection = add_sla(projection, sla_level)
+
     projection_reset = projection.reset_index(drop=True)
     concat_projection = pd.DataFrame(
         data=preprocessing.transform(
@@ -177,6 +189,7 @@ def update_data(
         ),
         columns=non_dummy_columns,
     )
+
     projection_scaled = pd.concat(
         (concat_projection, projection_reset[dummy_columns]), axis=1
     )
@@ -197,3 +210,9 @@ def update_data(
     )
 
     return y_true, y_future, alerts
+
+if __name__ == "__main__":
+    # For testing purposes
+    DEBUG = True
+    X, y = get_data(DEBUG)
+    print(X)

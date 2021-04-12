@@ -188,6 +188,7 @@ def update_graphs(
         alerts_peak=alerts_peak,
         coef_bell1=coef_bell1,
         coef_bell2=coef_bell2,
+        sla_level=0.95
     )
     fig1 = plot_taskforce(y_true, y_future, population_type)
     fig2 = plot_alert(alerts, y_future)
