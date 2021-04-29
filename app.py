@@ -18,6 +18,7 @@ else:
     DEBUG = False
 
 X, y = get_data(DEBUG)
+print(y['nurse'].index[-1])
 scaler, lin_reg = machine_learning_parameters()
 
 app = dash.Dash(
@@ -49,12 +50,13 @@ app.layout = html.Div(
                 html.Div(
                     className="controllers",
                     children=[
-                        dcc.DatePickerSingle(
-                            id="start_date",
-                            date=datetime.date(2020, 3, 10),
+                        dcc.DatePickerRange(
+                            id="input_dates",
+                            start_date=datetime.date(2020, 3, 10),
                             display_format="DD/MM/YYYY",
                             min_date_allowed=datetime.date(2020, 3, 10),
-                            placeholder="START DATE",
+                            start_date_placeholder_text="START DATE",
+                            end_date_placeholder_text="END DATE",
                         ),
                         html.Label("Type of population"),
                         dcc.Dropdown(
@@ -143,7 +145,8 @@ app.layout = html.Div(
 @app.callback(
     Output("its_graph", "figure"),
     Output("alert_graph", "figure"),
-    Input("start_date", "date"),
+    Input("input_dates", "start_date"),
+    Input("input_dates", "end_date"),
     Input("arithmetic_parameter", "value"),
     Input("geometric_parameter", "value"),
     Input("number_of_days_projections", "value"),
@@ -154,7 +157,8 @@ app.layout = html.Div(
     Input("coef_bell2", "value"),
 )
 def update_graphs(
-    start_date,
+    start_date_,
+    end_date_,
     arithmetic_parameter,
     geometric_parameter,
     number_of_days_projections,
@@ -168,7 +172,11 @@ def update_graphs(
     This function updates the two graphs with the parameters from the controller's section.
     """
     # converts start date input into datetime
-    start = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+    start = datetime.datetime.strptime(start_date_, "%Y-%m-%d")
+    try:
+        end=datetime.datetime.strptime(end_date_, "%Y-%m-%d")
+    except:
+        end=datetime.datetime.combine((y[population_type].index[-1]+datetime.timedelta(days=number_of_days_projections)).date(), datetime.datetime.min.time())
     y_plot = y[population_type]
 
     if alerts_peak >= number_of_days_projections:
@@ -188,9 +196,9 @@ def update_graphs(
         alerts_peak=alerts_peak,
         coef_bell1=coef_bell1,
         coef_bell2=coef_bell2,
-    )
-    fig1 = plot_taskforce(y_true, y_future, population_type)
-    fig2 = plot_alert(alerts, y_future)
+    )    
+    fig1 = plot_taskforce(y_true, y_future, population_type, end)
+    fig2 = plot_alert(alerts, y_future, end)
     return fig1, fig2
 
 

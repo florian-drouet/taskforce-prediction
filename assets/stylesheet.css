@@ -87,7 +87,7 @@
   .controllers { 
     font-family: "Open Sans";
     grid-area: controllers;
-    font-size: 18px;
+    font-size: 16px;
     padding-left: 5px; }
   
   .fig1 { 
@@ -108,7 +108,8 @@ select {
   box-shadow: none;
   box-sizing: border-box; 
   font-family: inherit;
-  font-size: inherit;}
+  font-size: inherit;
+}
 
 label {
     font-family: "Open Sans";
