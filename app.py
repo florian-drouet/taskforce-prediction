@@ -18,7 +18,6 @@ else:
     DEBUG = False
 
 X, y = get_data(DEBUG)
-print(y['nurse'].index[-1])
 scaler, lin_reg = machine_learning_parameters()
 
 app = dash.Dash(
@@ -57,6 +56,7 @@ app.layout = html.Div(
                             min_date_allowed=datetime.date(2020, 3, 10),
                             start_date_placeholder_text="START DATE",
                             end_date_placeholder_text="END DATE",
+                            clearable=True,
                         ),
                         html.Label("Type of population"),
                         dcc.Dropdown(
@@ -171,11 +171,12 @@ def update_graphs(
     """
     This function updates the two graphs with the parameters from the controller's section.
     """
-    # converts start date input into datetime
-    start = datetime.datetime.strptime(start_date_, "%Y-%m-%d")
+    # converts start date input into datetime    
     try:
+        start = datetime.datetime.strptime(start_date_, "%Y-%m-%d")
         end=datetime.datetime.strptime(end_date_, "%Y-%m-%d")
     except:
+        start=datetime.datetime(2020,3,10,0,0,0)
         end=datetime.datetime.combine((y[population_type].index[-1]+datetime.timedelta(days=number_of_days_projections)).date(), datetime.datetime.min.time())
     y_plot = y[population_type]
 
