@@ -171,20 +171,24 @@ def update_graphs(
     """
     This function updates the two graphs with the parameters from the controller's section.
     """
-    # converts start date input into datetime    
+    # converts start date input into datetime
     try:
-        start = datetime.datetime.strptime(start_date_, "%Y-%m-%d")
-        end=datetime.datetime.strptime(end_date_, "%Y-%m-%d")
+        start = datetime.datetime.strptime(start_date_, "%Y-%m-%d")        
     except:
         start=datetime.datetime(2020,3,10,0,0,0)
+
+    # converts end date input into datetime
+    try:
+        end=datetime.datetime.strptime(end_date_, "%Y-%m-%d")
+    except:
         end=datetime.datetime.combine((y[population_type].index[-1]+datetime.timedelta(days=number_of_days_projections)).date(), datetime.datetime.min.time())
+
     y_plot = y[population_type]
 
     if alerts_peak >= number_of_days_projections:
         raise Exception(
-            "WARNING : The peak of alerts cannot be greather than (or equal) to the number of projection days ! Please enter anothe value."
+            "WARNING : The peak of alerts cannot be greather than (or equal) to the number of projection days ! Please enter another value."
         )
-
     y_true, y_future, alerts = update_data(
         X=X.loc[X.index >= start],
         y=y_plot.loc[y_plot.index >= start],
